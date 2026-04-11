@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  User, 
+  User as UserIcon, 
   MapPin, 
   CreditCard, 
   History, 
@@ -14,41 +14,53 @@ import { Header } from '../components/layout/Header';
 import { useCart } from '../hooks/useCart';
 import { useFavorites } from '../hooks/useFavorites';
 import { useOrders } from '../hooks/useOrders';
-import { PRODUCTS } from '../constants';
-import { X } from 'lucide-react';
+import { ProductService } from '../services/api';
 import { OrderDetailsModal } from '../components/common/OrderDetailsModal';
 import { EditProfileModal, UserProfile } from '../components/profile/EditProfileModal';
-import { Order } from '../types';
+import { Order, Product } from '../types';
+import { useAuth } from '../hooks/useAuth';
 
 export const Profile: React.FC = () => {
   const navigate = useNavigate();
   const { cartCount, setIsCartOpen } = useCart();
   const { favorites } = useFavorites();
   const { orders } = useOrders();
+  const { user, logout } = useAuth();
 
+  const [products, setProducts] = React.useState<Product[]>([]);
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
   const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
 
-  const [userData, setUserData] = React.useState<UserProfile>(() => {
-    const saved = localStorage.getItem('mineiro_user');
-    return saved ? JSON.parse(saved) : {
-      name: 'Alan Souza',
-      email: 'alansouza4001@gmail.com',
-      phone: '(31) 99999-9999',
-      address: 'Rua das Jabuticabeiras, 123 - Belo Horizonte, MG'
+  React.useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await ProductService.getAll();
+        setProducts(data);
+      } catch (error) {
+        console.error('Failed to fetch products for favorites', error);
+      }
     };
-  });
+    fetchProducts();
+  }, []);
+
+  // Use centralized user data from AuthContext
+  const userData: UserProfile = {
+    name: user?.name || 'Visitante',
+    email: user?.email || '',
+    phone: '(31) 99999-9999', // Placeholder as backend Client entity has this but AuthResponse might not yet
+    address: 'Endereço não cadastrado' 
+  };
 
   const handleSaveProfile = (data: UserProfile) => {
-    setUserData(data);
-    localStorage.setItem('mineiro_user', JSON.stringify(data));
+    // This would typically call a backend update endpoint
+    console.log('Save profile', data);
     setIsEditModalOpen(false);
   };
 
-  const favoriteProducts = PRODUCTS.filter(p => favorites.includes(p.id));
+  const favoriteProducts = products.filter(p => favorites.includes(p.id));
 
   const handleLogout = () => {
-    localStorage.removeItem('auth_token');
+    logout();
     navigate('/login');
   };
 
@@ -92,7 +104,7 @@ export const Profile: React.FC = () => {
           <div className="lg:col-span-1 space-y-6">
             <section className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
               <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
-                <User className="w-5 h-5 text-mineiro-brown" />
+                <UserIcon className="w-5 h-5 text-mineiro-brown" />
                 Dados Pessoais
               </h2>
               <div className="space-y-4">
@@ -152,18 +164,18 @@ export const Profile: React.FC = () => {
                         <Package className="w-6 h-6 text-mineiro-brown" />
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900">{order.id}</p>
-                        <p className="text-xs text-gray-500">{new Date(order.createdAt).toLocaleDateString()} • {order.items.length} itens</p>
+                        <p className="font-mono text-xs font-bold text-gray-400">{order.id.substring(0, 8)}...</p>
+                        <p className="text-xs text-gray-500">{order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Recent'} • {order.items.length} itens</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-mineiro-brown">R$ {order.total.toFixed(2)}</p>
                       <p className={`text-[10px] font-bold uppercase tracking-widest ${
-                        order.status === 'delivered' ? 'text-green-500' : 
-                        order.status === 'preparing' ? 'text-blue-500' : 
+                        order.status === 'Entregue' ? 'text-green-500' : 
+                        order.status === 'Em produção' ? 'text-blue-500' : 
                         'text-amber-500'
                       }`}>
-                        {order.status === 'delivered' ? 'Entregue' : order.status === 'preparing' ? 'Em Preparo' : 'Pendente'}
+                        {order.status}
                       </p>
                     </div>
                   </div>
