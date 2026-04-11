@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ChevronLeft, MapPin, CreditCard, CheckCircle2, ArrowRight, User } from 'lucide-react';
+import { ChevronLeft, MapPin, CreditCard, CheckCircle2, ArrowRight, User, Info } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useCart } from '../hooks/useCart';
 import { useOrders } from '../hooks/useOrders';
+import { useAuth } from '../hooks/useAuth';
 
 const checkoutSchema = z.object({
   name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
@@ -21,6 +22,8 @@ export const Checkout: React.FC = () => {
   const navigate = useNavigate();
   const { cart, cartTotal, cartCount, clearCart } = useCart();
   const { addOrder } = useOrders();
+  const { user } = useAuth();
+  const isDemo = user?.roles.includes('ROLE_DEMO');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -36,6 +39,11 @@ export const Checkout: React.FC = () => {
 
   const onSubmit = async (data: CheckoutFormData) => {
     if (cartCount === 0) return;
+
+    if (isDemo) {
+      alert('Modo demonstração: você não tem permissão para realizar pedidos.');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -82,6 +90,15 @@ export const Checkout: React.FC = () => {
       </header>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex-1 max-w-3xl mx-auto w-full p-4 space-y-6 pb-32">
+        {isDemo && (
+          <div className="p-4 bg-amber-50 border border-amber-100 rounded-2xl flex items-start gap-3">
+            <Info className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <p className="text-sm text-amber-800 font-medium">
+              Você está em <span className="font-bold">Modo Demo</span>. A finalização de pedidos está desabilitada nesta conta de demonstração.
+            </p>
+          </div>
+        )}
+
         {/* Customer Info */}
         <section className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
           <div className="flex items-center gap-3 mb-6">
@@ -179,8 +196,8 @@ export const Checkout: React.FC = () => {
           <div className="max-w-3xl mx-auto">
             <button 
               type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-mineiro-brown text-white py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-mineiro-clay transition-all disabled:opacity-50"
+              disabled={isSubmitting || isDemo}
+              className={`w-full bg-mineiro-brown text-white py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all ${isDemo ? 'opacity-50 cursor-not-allowed' : 'hover:bg-mineiro-clay'}`}
             >
               {isSubmitting ? 'Processando...' : 'Confirmar Pedido'}
               {!isSubmitting && <ArrowRight className="w-5 h-5" />}
