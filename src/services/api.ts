@@ -29,26 +29,36 @@ api.interceptors.response.use(
 
 export const ProductService = {
   getAll: async () => {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    const { PRODUCTS } = await import('../constants');
-    return PRODUCTS;
+    const response = await api.get<Product[]>('/products');
+    return response.data;
   },
-  create: async (productData: unknown) => {
-    return { id: Math.floor(Math.random() * 1000), status: 'SUCCESS' };
+  create: async (productData: Partial<Product>) => {
+    const response = await api.post<Product>('/products', productData);
+    return response.data;
   },
-  update: async (id: number, productData: unknown) => {
-    return { id, status: 'SUCCESS' };
+  update: async (id: number, productData: Partial<Product>) => {
+    const response = await api.put<Product>(`/products/${id}`, productData);
+    return response.data;
   },
   delete: async (id: number) => {
-    return { id, status: 'SUCCESS' };
+    const response = await api.delete(`/products/${id}`);
+    return response.data;
   }
 };
 
 export const OrderService = {
-  create: async (orderData: unknown) => {
-    return { id: Math.floor(Math.random() * 1000), status: 'SUCCESS' };
+  getAll: async () => {
+    const response = await api.get<Order[]>('/orders');
+    return response.data;
   },
+  create: async (orderData: any) => {
+    const response = await api.post<Order>('/orders', orderData);
+    return response.data;
+  },
+  updateStatus: async (id: string, status: Order['status']) => {
+    const response = await api.patch<Order>(`/orders/${id}/status`, { status });
+    return response.data;
+  }
 };
 
 export default api;

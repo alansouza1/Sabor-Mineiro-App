@@ -26,7 +26,9 @@ export const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, onStatusChange
           <option value="all">Todos os Status</option>
           <option value="pending">Pendente</option>
           <option value="preparing">Em Preparo</option>
+          <option value="out_for_delivery">Em Rota</option>
           <option value="delivered">Entregue</option>
+          <option value="cancelled">Cancelado</option>
         </select>
       </div>
       <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
@@ -52,6 +54,8 @@ export const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, onStatusChange
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider outline-none border-none cursor-pointer ${
                       order.status === 'delivered' ? 'bg-green-100 text-green-700' :
                       order.status === 'preparing' ? 'bg-blue-100 text-blue-700' :
+                      order.status === 'out_for_delivery' ? 'bg-purple-100 text-purple-700' :
+                      order.status === 'cancelled' ? 'bg-red-100 text-red-700' :
                       'bg-amber-100 text-amber-700'
                     }`}
                     value={order.status}
@@ -59,7 +63,9 @@ export const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, onStatusChange
                   >
                     <option value="pending">Pendente</option>
                     <option value="preparing">Preparando</option>
+                    <option value="out_for_delivery">Em Rota</option>
                     <option value="delivered">Entregue</option>
+                    <option value="cancelled">Cancelado</option>
                   </select>
                 </td>
                 <td className="px-8 py-5 text-sm text-gray-500">{new Date(order.createdAt).toLocaleTimeString()}</td>

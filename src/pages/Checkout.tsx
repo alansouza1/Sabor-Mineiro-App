@@ -39,7 +39,7 @@ export const Checkout: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      addOrder({
+      await addOrder({
         items: cart,
         total: cartTotal,
         customer: data
