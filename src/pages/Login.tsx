@@ -72,7 +72,7 @@ export const Login: React.FC = () => {
             <div className="flex items-start gap-3">
               <ShieldCheck className="w-5 h-5 text-amber-600 mt-0.5" />
               <div>
-                <h3 className="text-sm font-bold text-amber-900">Acesso para Recrutadores</h3>
+                <h3 className="text-sm font-bold text-amber-900">Acesso Demo</h3>
                 <p className="text-xs text-amber-700 mt-1 mb-3">Utilize o botão abaixo para entrar como um usuário de demonstração (somente visualização).</p>
                 <button 
 
