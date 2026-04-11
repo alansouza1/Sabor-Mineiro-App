@@ -24,6 +24,6 @@ export interface Order {
   };
   items: CartItem[];
   total: number;
-  status: 'pending' | 'preparing' | 'delivered';
+  status: 'pending' | 'preparing' | 'out_for_delivery' | 'delivered' | 'cancelled';
   createdAt: string;
 }

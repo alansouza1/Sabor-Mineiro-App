@@ -1,43 +1,69 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Order } from '../types';
+import { OrderService } from '../services/api';
 
 export const useOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const savedOrders = localStorage.getItem('mineiro_orders');
-    if (savedOrders) {
-      try {
-        setOrders(JSON.parse(savedOrders));
-      } catch (e) {
-        console.error('Failed to parse orders from local storage', e);
-      }
+  const fetchOrders = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await OrderService.getAll();
+      setOrders(data);
+    } catch (err) {
+      console.error('Failed to fetch orders:', err);
+      setError('Falha ao carregar pedidos. Tente novamente mais tarde.');
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  const addOrder = useCallback((orderData: Omit<Order, 'id' | 'status' | 'createdAt'>) => {
-    const newOrder: Order = {
-      ...orderData,
-      id: `#${Math.floor(Math.random() * 900) + 100}`,
-      status: 'pending',
-      createdAt: new Date().toISOString()
-    };
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
-    setOrders(prev => {
-      const updatedOrders = [newOrder, ...prev];
-      localStorage.setItem('mineiro_orders', JSON.stringify(updatedOrders));
-      return updatedOrders;
-    });
-    return newOrder;
+  const addOrder = useCallback(async (orderData: Omit<Order, 'id' | 'status' | 'createdAt'>) => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Transforming for backend if necessary (mapping nested fields)
+      const payload = {
+        customer: orderData.customer,
+        items: orderData.items.map(item => ({
+          productId: item.id,
+          quantity: item.quantity,
+          observations: item.observations
+        }))
+      };
+      const newOrder = await OrderService.create(payload);
+      setOrders(prev => [newOrder, ...prev]);
+      return newOrder;
+    } catch (err) {
+      console.error('Failed to add order:', err);
+      setError('Falha ao processar pedido. Tente novamente.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const updateOrderStatus = useCallback((orderId: string, status: Order['status']) => {
-    setOrders(prev => {
-      const updatedOrders = prev.map(o => o.id === orderId ? { ...o, status } : o);
-      localStorage.setItem('mineiro_orders', JSON.stringify(updatedOrders));
-      return updatedOrders;
-    });
+  const updateOrderStatus = useCallback(async (orderId: string, status: Order['status']) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const updatedOrder = await OrderService.updateStatus(orderId, status);
+      setOrders(prev => prev.map(o => o.id === orderId ? updatedOrder : o));
+    } catch (err) {
+      console.error('Failed to update order status:', err);
+      setError('Falha ao atualizar status do pedido.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  return { orders, addOrder, updateOrderStatus };
+  return { orders, loading, error, addOrder, updateOrderStatus, fetchOrders };
 };
