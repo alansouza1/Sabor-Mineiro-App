@@ -3,8 +3,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useNavigate, Link } from 'react-router-dom';
-import { Lock, User, ArrowRight, ArrowLeft, AlertCircle } from 'lucide-react';
-import api from '../services/api';
+import { Lock, User, ArrowRight, ArrowLeft, AlertCircle, ShieldCheck, Loader2 } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -15,16 +15,23 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [loginError, setLoginError] = React.useState<string | null>(null);
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema)
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: 'admin@sabormineiro.com',
+      password: 'admin123'
+    }
   });
 
   const onSubmit = async (data: LoginFormData) => {
     setLoginError(null);
+    setIsSubmitting(true);
     try {
-      const response = await api.post('/auth/login', data);
-      localStorage.setItem('mineiro_user', JSON.stringify(response.data));
+      await login(data.email, data.password);
       navigate('/admin');
     } catch (error: any) {
       console.error('Login failed:', error);
@@ -33,7 +40,15 @@ export const Login: React.FC = () => {
       } else {
         setLoginError('Falha ao conectar com o servidor. Verifique se o backend está rodando.');
       }
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleDemoAccess = async () => {
+    setValue('email', 'admin@sabormineiro.com');
+    setValue('password', 'admin123');
+    await handleSubmit(onSubmit)();
   };
 
   return (
@@ -49,11 +64,33 @@ export const Login: React.FC = () => {
         
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
           <div className="text-center mb-8">
-            <div className="bg-mineiro-brown w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Lock className="text-white w-8 h-8" />
+            <div className="bg-mineiro-brown w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white">
+              <Lock className="w-8 h-8" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">Acesso Restrito</h1>
             <p className="text-gray-500">Entre com suas credenciais administrativas</p>
+          </div>
+
+          <div className="mb-8 p-4 bg-amber-50 border border-amber-100 rounded-2xl">
+            <div className="flex items-start gap-3">
+              <ShieldCheck className="w-5 h-5 text-amber-600 mt-0.5" />
+              <div>
+                <h3 className="text-sm font-bold text-amber-900">Acesso Demo</h3>
+                <p className="text-xs text-amber-700 mt-1 mb-3">Utilize o botão abaixo para entrar automaticamente como administrador.</p>
+                <button 
+                  onClick={handleDemoAccess}
+                  disabled={isSubmitting}
+                  className="w-full bg-amber-600 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-amber-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "🔓 Acessar como Demo"}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative mb-8">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-100"></div></div>
+            <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-2 text-gray-400 font-bold">Ou via login</span></div>
           </div>
 
           {loginError && (
@@ -71,7 +108,7 @@ export const Login: React.FC = () => {
                 <input 
                   {...register('email')}
                   type="email"
-                  className={`w-full bg-gray-50 border ${errors.email ? 'border-red-500' : 'border-gray-200'} rounded-2xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-mineiro-brown/20 outline-none`}
+                  className={`w-full bg-gray-50 border ${errors.email ? 'border-red-500' : 'border-gray-200'} rounded-2xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-mineiro-brown/20 outline-none transition-all`}
                   placeholder="admin@sabormineiro.com"
                 />
               </div>
@@ -85,7 +122,7 @@ export const Login: React.FC = () => {
                 <input 
                   {...register('password')}
                   type="password"
-                  className={`w-full bg-gray-50 border ${errors.password ? 'border-red-500' : 'border-gray-200'} rounded-2xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-mineiro-brown/20 outline-none`}
+                  className={`w-full bg-gray-50 border ${errors.password ? 'border-red-500' : 'border-gray-200'} rounded-2xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-mineiro-brown/20 outline-none transition-all`}
                   placeholder="••••••••"
                 />
               </div>
@@ -94,10 +131,15 @@ export const Login: React.FC = () => {
 
             <button 
               type="submit"
-              className="w-full bg-mineiro-brown text-white py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-mineiro-clay transition-all"
+              disabled={isSubmitting}
+              className="w-full bg-mineiro-brown text-white py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-mineiro-clay transition-all disabled:opacity-50"
             >
-              Entrar
-              <ArrowRight className="w-5 h-5" />
+              {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : (
+                <>
+                  Entrar
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
             </button>
           </form>
         </div>
