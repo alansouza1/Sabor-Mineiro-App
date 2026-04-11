@@ -9,6 +9,22 @@ const api = axios.create({
   },
 });
 
+api.interceptors.request.use(
+  (config) => {
+    const userJson = localStorage.getItem('mineiro_user');
+    if (userJson) {
+      const user = JSON.parse(userJson);
+      if (user.token) {
+        config.headers.Authorization = `Bearer ${user.token}`;
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {

@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useNavigate, Link } from 'react-router-dom';
 import { Lock, User, ArrowRight, ArrowLeft, AlertCircle } from 'lucide-react';
+import api from '../services/api';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -19,14 +20,19 @@ export const Login: React.FC = () => {
     resolver: zodResolver(loginSchema)
   });
 
-  const onSubmit = (data: LoginFormData) => {
+  const onSubmit = async (data: LoginFormData) => {
     setLoginError(null);
-    // Mock authentication
-    if (data.email === 'admin@sabormineiro.com' && data.password === 'admin123') {
-      localStorage.setItem('auth_token', 'mock_token');
+    try {
+      const response = await api.post('/auth/login', data);
+      localStorage.setItem('mineiro_user', JSON.stringify(response.data));
       navigate('/admin');
-    } else {
-      setLoginError('Credenciais inválidas. Tente admin@sabormineiro.com / admin123');
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        setLoginError('Email ou senha incorretos.');
+      } else {
+        setLoginError('Falha ao conectar com o servidor. Verifique se o backend está rodando.');
+      }
     }
   };
 
