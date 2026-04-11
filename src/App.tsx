@@ -14,6 +14,7 @@ import { Login } from './pages/Login';
 import { Profile } from './pages/Profile';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { AuthProvider } from './hooks/useAuth';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +28,8 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <Router>
+      <AuthProvider>
+        <Router>
         <div className="min-h-screen flex flex-col">
           <AnimatePresence>
             {isLoading && <LoadingScreen />}
@@ -50,6 +52,7 @@ export default function App() {
           </Routes>
         </div>
       </Router>
+      </AuthProvider>
     </ErrorBoundary>
   );
 }
