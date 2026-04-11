@@ -56,10 +56,19 @@ export const Admin: React.FC = () => {
     setProductToDelete(id);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (productToDelete !== null) {
-      setProducts(prev => prev.filter(p => p.id !== productToDelete));
-      setProductToDelete(null);
+      setIsLoading(true);
+      try {
+        await ProductService.delete(productToDelete);
+        setProducts(prev => prev.filter(p => p.id !== productToDelete));
+        setProductToDelete(null);
+      } catch (error) {
+        console.error('Failed to delete product', error);
+        alert('Falha ao excluir produto.');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -73,13 +82,23 @@ export const Admin: React.FC = () => {
     setIsProductModalOpen(true);
   };
 
-  const handleSaveProduct = (newProduct: Product) => {
-    if (editingProduct) {
-      setProducts(prev => prev.map(p => p.id === editingProduct.id ? newProduct : p));
-    } else {
-      setProducts(prev => [newProduct, ...prev]);
+  const handleSaveProduct = async (productData: Partial<Product>) => {
+    setIsLoading(true);
+    try {
+      if (editingProduct) {
+        const updated = await ProductService.update(editingProduct.id, productData);
+        setProducts(prev => prev.map(p => p.id === editingProduct.id ? updated : p));
+      } else {
+        const created = await ProductService.create(productData);
+        setProducts(prev => [created, ...prev]);
+      }
+      setIsProductModalOpen(false);
+    } catch (error) {
+      console.error('Failed to save product', error);
+      alert('Falha ao salvar produto.');
+    } finally {
+      setIsLoading(false);
     }
-    setIsProductModalOpen(false);
   };
 
   const handleStatusChange = (orderId: string, newStatus: Order['status']) => {
