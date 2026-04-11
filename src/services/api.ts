@@ -35,7 +35,7 @@ api.interceptors.response.use(
       window.location.href = '/login';
     } else if (status === 403) {
       const message = error.response?.data?.message || '';
-      if (message.includes('Demo users')) {
+      if (message.includes('Demo')) {
         alert('Modo demonstração: você não tem permissão para realizar esta ação.');
       } else {
         alert('Você não tem permissão para realizar esta ação.');
