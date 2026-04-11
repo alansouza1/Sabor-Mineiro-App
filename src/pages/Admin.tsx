@@ -7,7 +7,8 @@ import {
   Plus, 
   AlertCircle,
   Store,
-  LogOut
+  LogOut,
+  Info
 } from 'lucide-react';
 import { ProductService } from '../services/api';
 import { Product, Order } from '../types';
@@ -17,11 +18,15 @@ import { ProductFormModal } from '../components/admin/ProductFormModal';
 import { AdminDashboard } from '../components/admin/AdminDashboard';
 import { AdminOrders } from '../components/admin/AdminOrders';
 import { AdminProducts } from '../components/admin/AdminProducts';
+import { useAuth } from '../hooks/useAuth';
 
 type Tab = 'dashboard' | 'orders' | 'products';
 
 export const Admin: React.FC = () => {
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
+  const isDemo = user?.roles.includes('ROLE_DEMO');
+  
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,11 +53,15 @@ export const Admin: React.FC = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('auth_token');
+    logout();
     navigate('/login');
   };
 
   const handleDeleteProduct = (id: number) => {
+    if (isDemo) {
+      alert('Modo demonstração: você não tem permissão para excluir produtos.');
+      return;
+    }
     setProductToDelete(id);
   };
 
@@ -65,7 +74,6 @@ export const Admin: React.FC = () => {
         setProductToDelete(null);
       } catch (error) {
         console.error('Failed to delete product', error);
-        alert('Falha ao excluir produto.');
       } finally {
         setIsLoading(false);
       }
@@ -73,11 +81,19 @@ export const Admin: React.FC = () => {
   };
 
   const handleOpenCreateModal = () => {
+    if (isDemo) {
+      alert('Modo demonstração: você não tem permissão para criar produtos.');
+      return;
+    }
     setEditingProduct(null);
     setIsProductModalOpen(true);
   };
 
   const handleOpenEditModal = (product: Product) => {
+    if (isDemo) {
+      alert('Modo demonstração: você não tem permissão para editar produtos.');
+      return;
+    }
     setEditingProduct(product);
     setIsProductModalOpen(true);
   };
@@ -95,13 +111,16 @@ export const Admin: React.FC = () => {
       setIsProductModalOpen(false);
     } catch (error) {
       console.error('Failed to save product', error);
-      alert('Falha ao salvar produto.');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleStatusChange = (orderId: string, newStatus: Order['status']) => {
+    if (isDemo) {
+      alert('Modo demonstração: você não tem permissão para alterar o status de pedidos.');
+      return;
+    }
     updateOrderStatus(orderId, newStatus);
   };
 
@@ -110,7 +129,14 @@ export const Admin: React.FC = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-mineiro-brown text-white hidden md:flex flex-col sticky top-0 h-screen">
         <div className="p-6 border-b border-white/10">
-          <h1 className="text-xl font-serif font-bold">Sabor Mineiro</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-serif font-bold">Sabor Mineiro</h1>
+            {isDemo && (
+              <span className="bg-amber-500 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter text-white">
+                Demo
+              </span>
+            )}
+          </div>
           <p className="text-xs text-mineiro-cream/60 uppercase tracking-widest mt-1">Admin Panel</p>
         </div>
         <nav className="flex-1 p-4 space-y-2">
@@ -136,6 +162,17 @@ export const Admin: React.FC = () => {
             <span className="font-medium">Produtos</span>
           </button>
         </nav>
+
+        {isDemo && (
+          <div className="mx-4 mb-4 p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">
+            <div className="flex items-start gap-3">
+              <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+              <p className="text-[10px] leading-tight text-amber-200/80 font-medium">
+                Você está em <span className="text-amber-400 font-bold">Modo Demo</span>. Ações de alteração estão desabilitadas para preservar os dados da demonstração.
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className="p-4 border-t border-white/10 space-y-2">
           <Link 
@@ -163,7 +200,8 @@ export const Admin: React.FC = () => {
             {activeTab === 'products' && (
               <button 
                 onClick={handleOpenCreateModal}
-                className="bg-mineiro-brown text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold hover:bg-mineiro-clay transition-all"
+                disabled={isDemo}
+                className={`bg-mineiro-brown text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold transition-all ${isDemo ? 'opacity-50 cursor-not-allowed' : 'hover:bg-mineiro-clay'}`}
               >
                 <Plus className="w-4 h-4" />
                 Novo Produto
