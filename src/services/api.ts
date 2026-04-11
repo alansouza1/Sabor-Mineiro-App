@@ -31,10 +31,15 @@ api.interceptors.response.use(
     const status = error.response ? error.response.status : null;
 
     if (status === 401) {
-      console.error('Unauthorized access - redirecting to login');
-      // Logic to handle unauthorized access (e.g., clear tokens, redirect)
+      localStorage.removeItem('mineiro_user');
+      window.location.href = '/login';
     } else if (status === 403) {
-      console.error('Forbidden access');
+      const message = error.response?.data?.message || '';
+      if (message.includes('Demo users')) {
+        alert('Modo demonstração: você não tem permissão para realizar esta ação.');
+      } else {
+        alert('Você não tem permissão para realizar esta ação.');
+      }
     } else if (status >= 500) {
       console.error('Server error');
     }
