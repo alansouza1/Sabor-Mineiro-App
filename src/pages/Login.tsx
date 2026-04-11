@@ -20,11 +20,7 @@ export const Login: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: 'admin@sabormineiro.com',
-      password: 'admin123'
-    }
+    resolver: zodResolver(loginSchema)
   });
 
   const onSubmit = async (data: LoginFormData) => {
