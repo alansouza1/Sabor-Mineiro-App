@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
@@ -12,6 +13,12 @@ const getVisitorId = () => {
   return vid;
 };
 
+let authToken: string | null = null;
+
+export const setAuthToken = (token: string | null) => {
+  authToken = token;
+};
+
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -22,12 +29,8 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     config.headers['X-Visitor-Id'] = getVisitorId();
-    const userJson = localStorage.getItem('mineiro_user');
-    if (userJson) {
-      const user = JSON.parse(userJson);
-      if (user.token) {
-        config.headers.Authorization = `Bearer ${user.token}`;
-      }
+    if (authToken) {
+      config.headers.Authorization = `Bearer ${authToken}`;
     }
     return config;
   },
@@ -42,19 +45,17 @@ api.interceptors.response.use(
     const status = error.response ? error.response.status : null;
 
     if (status === 401) {
-      localStorage.removeItem('mineiro_user');
-      if (!window.location.pathname.includes('/login')) {
-        window.location.href = `/login?from=${encodeURIComponent(window.location.pathname)}`;
-      }
+      window.dispatchEvent(new CustomEvent('unauthorized'));
     } else if (status === 403) {
       const message = error.response?.data?.message || '';
       if (message.includes('Demo')) {
-        alert('Modo demonstração: você não tem permissão para realizar esta ação.');
+        toast.error('Modo demonstração: você não tem permissão para realizar esta ação.');
       } else {
-        alert('Você não tem permissão para realizar esta ação.');
+        toast.error('Você não tem permissão para realizar esta ação.');
       }
     } else if (status >= 500) {
       console.error('Server error');
+      toast.error('Ocorreu um erro no servidor.');
     }
 
     return Promise.reject(error);

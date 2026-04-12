@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
+import { Toaster } from 'react-hot-toast';
 
 // Components
 import { LoadingScreen } from './components/ui/LoadingScreen';
@@ -31,6 +32,7 @@ export default function App() {
       <AuthProvider>
         <Router>
         <div className="min-h-screen flex flex-col">
+          <Toaster position="top-right" />
           <AnimatePresence>
             {isLoading && <LoadingScreen />}
           </AnimatePresence>
