@@ -14,6 +14,14 @@ export interface CartItem extends Product {
   observations?: string;
 }
 
+export interface OrderItem {
+  id: number;
+  product: Product;
+  quantity: number;
+  observations?: string;
+  priceAtPurchase: number;
+}
+
 export interface Order {
   id: string;
   customer: {
@@ -22,8 +30,19 @@ export interface Order {
     address: string;
     paymentMethod: string;
   };
-  items: CartItem[];
+  items: OrderItem[];
   total: number;
   status: 'pending' | 'preparing' | 'out_for_delivery' | 'delivered' | 'cancelled';
   createdAt: string;
+}
+
+export interface CreateOrderRequest {
+  customer: {
+    name: string;
+    phone: string;
+    address: string;
+  };
+  items: CartItem[];
+  total: number;
+  paymentMethod: string;
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Order } from '../types';
+import { Order, CreateOrderRequest } from '../types';
 import { OrderService } from '../services/api';
 
 export const useOrders = () => {
@@ -25,13 +25,14 @@ export const useOrders = () => {
     fetchOrders();
   }, [fetchOrders]);
 
-  const addOrder = useCallback(async (orderData: Omit<Order, 'id' | 'status' | 'createdAt'>) => {
+  const addOrder = useCallback(async (orderData: CreateOrderRequest) => {
     setLoading(true);
     setError(null);
     try {
       // Transforming for backend if necessary (mapping nested fields)
       const payload = {
         customer: orderData.customer,
+        paymentMethod: orderData.paymentMethod,
         items: orderData.items.map(item => ({
           productId: item.id,
           quantity: item.quantity,

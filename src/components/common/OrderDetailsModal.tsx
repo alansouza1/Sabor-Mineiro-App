@@ -15,9 +15,9 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onC
       <div className="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h3 className="text-2xl font-bold">Pedido {order.id}</h3>
+            <h3 className="text-2xl font-bold">Pedido {order.id.substring(0, 8)}...</h3>
             <p className="text-sm text-gray-500">
-              {order.customer?.name || 'Cliente'} • {new Date(order.createdAt).toLocaleString()}
+              {order.customer?.name || 'Cliente'} • {order.createdAt ? new Date(order.createdAt).toLocaleString() : 'Recent'}
             </p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
@@ -25,17 +25,17 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onC
           </button>
         </div>
         
-        <div className="space-y-6">
+        <div className="space-y-6 overflow-y-auto max-h-[60vh] pr-2">
           <div className="space-y-2">
             <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Itens do Pedido</h4>
             {order.items.map((item, i) => (
-              <div key={i} className="p-3 bg-gray-50 rounded-xl">
+              <div key={i} className="p-3 bg-gray-50 rounded-xl border border-gray-100">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-gray-700">{item.quantity}x {item.nome}</span>
-                  <span className="text-sm font-medium text-mineiro-brown">R$ {(item.preco * item.quantity).toFixed(2)}</span>
+                  <span className="font-bold text-gray-700">{item.quantity}x {item.product.nome}</span>
+                  <span className="text-sm font-medium text-mineiro-brown">R$ {(item.priceAtPurchase * item.quantity).toFixed(2)}</span>
                 </div>
                 {item.observations && (
-                  <p className="text-xs text-gray-500 italic">Obs: {item.observations}</p>
+                  <p className="text-xs text-gray-500 italic bg-white/50 p-2 rounded-lg mt-2">Obs: {item.observations}</p>
                 )}
               </div>
             ))}
@@ -49,7 +49,7 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onC
           <div className="bg-mineiro-cream/20 p-4 rounded-2xl">
             <p className="text-xs font-bold text-mineiro-brown uppercase tracking-wider mb-1">Status</p>
             <p className="font-bold text-mineiro-brown capitalize">
-              {order.status === 'delivered' ? 'Entregue' : order.status === 'preparing' ? 'Em Preparo' : 'Pendente'}
+              {order.status}
             </p>
           </div>
 
