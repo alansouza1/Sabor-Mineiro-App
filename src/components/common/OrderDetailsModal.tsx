@@ -1,5 +1,5 @@
 import React from 'react';
-import { X } from 'lucide-react';
+import { X, CreditCard, Smartphone, Banknote } from 'lucide-react';
 import { Order } from '../../types';
 
 interface OrderDetailsModalProps {
@@ -9,6 +9,26 @@ interface OrderDetailsModalProps {
 
 export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onClose }) => {
   if (!order) return null;
+
+  const getPaymentLabel = (method: string) => {
+    switch (method) {
+      case 'pix': return 'PIX';
+      case 'card':
+      case 'credit_card': return 'Cartão de Crédito';
+      case 'cash': return 'Dinheiro';
+      default: return 'Dinheiro';
+    }
+  };
+
+  const getPaymentIcon = (method: string) => {
+    switch (method) {
+      case 'pix': return <Smartphone className="w-4 h-4" />;
+      case 'card':
+      case 'credit_card': return <CreditCard className="w-4 h-4" />;
+      case 'cash': return <Banknote className="w-4 h-4" />;
+      default: return <Banknote className="w-4 h-4" />;
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
@@ -46,11 +66,20 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onC
             <span className="text-2xl font-bold text-mineiro-brown">R$ {order.total.toFixed(2)}</span>
           </div>
 
-          <div className="bg-mineiro-cream/20 p-4 rounded-2xl">
-            <p className="text-xs font-bold text-mineiro-brown uppercase tracking-wider mb-1">Status</p>
-            <p className="font-bold text-mineiro-brown capitalize">
-              {order.status}
-            </p>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Pagamento</p>
+              <div className="flex items-center gap-2 text-gray-700">
+                {getPaymentIcon(order.customer.paymentMethod)}
+                <span className="text-sm font-bold">{getPaymentLabel(order.customer.paymentMethod)}</span>
+              </div>
+            </div>
+            <div className="bg-mineiro-cream/20 p-4 rounded-2xl">
+              <p className="text-[10px] font-bold text-mineiro-brown uppercase tracking-wider mb-1">Status</p>
+              <p className="text-sm font-bold text-mineiro-brown capitalize">
+                {order.status}
+              </p>
+            </div>
           </div>
 
           <button 
