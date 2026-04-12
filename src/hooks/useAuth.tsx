@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import api from '../services/api';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import api, { setAuthToken } from '../services/api';
 
 interface User {
   id: number;
@@ -22,24 +22,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const logout = useCallback(() => {
+    localStorage.removeItem('mineiro_user');
+    setAuthToken(null);
+    setUser(null);
+  }, []);
+
   useEffect(() => {
     const savedUser = localStorage.getItem('mineiro_user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
+        setAuthToken(parsedUser.token);
+      } catch (error) {
+        console.error("Failed to parse saved user", error);
+      }
     }
     setIsLoading(false);
-  }, []);
+
+    const handleUnauthorized = () => {
+      logout();
+    };
+
+    window.addEventListener('unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('unauthorized', handleUnauthorized);
+  }, [logout]);
 
   const login = async (email: string, password: string) => {
     const response = await api.post('/auth/login', { email, password });
     const userData = response.data;
     localStorage.setItem('mineiro_user', JSON.stringify(userData));
+    setAuthToken(userData.token);
     setUser(userData);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('mineiro_user');
-    setUser(null);
   };
 
   return (
@@ -56,3 +71,4 @@ export const useAuth = () => {
   }
   return context;
 };
+

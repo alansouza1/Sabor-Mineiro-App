@@ -1,27 +1,29 @@
 import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useOrders } from '../useOrders';
 
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: (key: string) => store[key] || null,
-    setItem: (key: string, value: string) => {
-      store[key] = value.toString();
-    },
-    clear: () => {
-      store = {};
-    },
-  };
-})();
-
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-});
+vi.mock('../../services/api', () => ({
+  OrderService: {
+    getAll: vi.fn().mockResolvedValue([]),
+    create: vi.fn().mockImplementation((data) => Promise.resolve({
+      ...data,
+      id: '#123',
+      status: 'pending'
+    })),
+    updateStatus: vi.fn().mockImplementation((id, status) => Promise.resolve({
+      id,
+      status,
+      customer: { name: 'Maria', phone: '31988888888', address: 'Rua Dois, 456', paymentMethod: 'cash' },
+      items: [],
+      total: 50
+    }))
+  }
+}));
 
 describe('useOrders', () => {
   beforeEach(() => {
     window.localStorage.clear();
+    vi.clearAllMocks();
   });
 
   it('should initialize with empty orders', () => {
@@ -29,7 +31,7 @@ describe('useOrders', () => {
     expect(result.current.orders).toEqual([]);
   });
 
-  it('should add a new order', () => {
+  it('should add a new order', async () => {
     const { result } = renderHook(() => useOrders());
 
     const newOrderData = {
@@ -44,8 +46,8 @@ describe('useOrders', () => {
     };
 
     let addedOrder;
-    act(() => {
-      addedOrder = result.current.addOrder(newOrderData);
+    await act(async () => {
+      addedOrder = await result.current.addOrder(newOrderData);
     });
 
     expect(result.current.orders).toHaveLength(1);
@@ -55,7 +57,7 @@ describe('useOrders', () => {
     expect(addedOrder).toBeDefined();
   });
 
-  it('should update order status', () => {
+  it('should update order status', async () => {
     const { result } = renderHook(() => useOrders());
 
     const newOrderData = {
@@ -70,14 +72,14 @@ describe('useOrders', () => {
     };
 
     let addedOrder: any;
-    act(() => {
-      addedOrder = result.current.addOrder(newOrderData);
+    await act(async () => {
+      addedOrder = await result.current.addOrder(newOrderData);
     });
 
     expect(result.current.orders[0].status).toBe('pending');
 
-    act(() => {
-      result.current.updateOrderStatus(addedOrder.id, 'preparing');
+    await act(async () => {
+      await result.current.updateOrderStatus(addedOrder.id, 'preparing');
     });
 
     expect(result.current.orders[0].status).toBe('preparing');

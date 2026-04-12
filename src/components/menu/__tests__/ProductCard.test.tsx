@@ -19,7 +19,7 @@ describe('ProductCard', () => {
     render(
       <ProductCard 
         product={mockProduct} 
-        onOpenModal={() => {}} 
+        onOpenDetails={() => {}} 
         onAddToCart={() => {}}
         isFavorite={false}
         onToggleFavorite={() => {}}
@@ -27,15 +27,15 @@ describe('ProductCard', () => {
     );
 
     expect(screen.getByText(mockProduct.name)).toBeDefined();
-    expect(screen.getByText(/32,23/)).toBeDefined();
+    expect(screen.getByText(/32\.23/)).toBeDefined();
   });
 
   it('should call onOpenModal when clicking the card', () => {
-    const onOpenModal = vi.fn();
+    const onOpenDetails = vi.fn();
     render(
       <ProductCard 
         product={mockProduct} 
-        onOpenModal={onOpenModal} 
+        onOpenDetails={onOpenDetails} 
         onAddToCart={() => {}}
         isFavorite={false}
         onToggleFavorite={() => {}}
@@ -43,7 +43,7 @@ describe('ProductCard', () => {
     );
 
     fireEvent.click(screen.getByText(mockProduct.name));
-    expect(onOpenModal).toHaveBeenCalledWith(mockProduct);
+    expect(onOpenDetails).toHaveBeenCalledWith(mockProduct);
   });
 
   it('should call onAddToCart when clicking the add button', () => {
@@ -51,14 +51,14 @@ describe('ProductCard', () => {
     render(
       <ProductCard 
         product={mockProduct} 
-        onOpenModal={() => {}} 
+        onOpenDetails={() => {}} 
         onAddToCart={onAddToCart}
         isFavorite={false}
         onToggleFavorite={() => {}}
       />
     );
 
-    fireEvent.click(screen.getByTitle(/Adicionar ao carrinho/));
+    fireEvent.click(screen.getByRole('button', { name: /Adicionar/i }));
     expect(onAddToCart).toHaveBeenCalledWith(mockProduct);
   });
 });
