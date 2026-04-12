@@ -25,7 +25,6 @@ export function useCart() {
       }
       return [...prev, { ...product, quantity: 1, observations }];
     });
-    setIsCartOpen(true);
   }, []);
 
   const removeFromCart = useCallback((productId: number, observations?: string) => {
