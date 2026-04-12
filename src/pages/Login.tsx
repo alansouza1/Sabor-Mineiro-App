@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -17,11 +17,15 @@ export const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+  
   const [loginError, setLoginError] = React.useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  // Get the intended destination or default to admin
-  const from = (location.state as any)?.from?.pathname || '/admin';
+  // FIX: Capture the destination ONLY ONCE when the component mounts
+  const from = useMemo(() => {
+    const state = location.state as { from?: { pathname: string } };
+    return state?.from?.pathname || '/admin';
+  }, []); // Empty dependency array ensures this is calculated only on mount
 
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema)
@@ -32,13 +36,14 @@ export const Login: React.FC = () => {
     setIsSubmitting(true);
     try {
       await login(data.email, data.password);
+      // Use the memoized 'from' path
       navigate(from, { replace: true });
     } catch (error: any) {
       console.error('Login failed:', error);
       if (error.response?.status === 401 || error.response?.status === 403) {
         setLoginError('Email ou senha incorretos.');
       } else {
-        setLoginError('Falha ao conectar com o servidor. Verifique se o backend está rodando.');
+        setLoginError('Falha ao conectar com o servidor.');
       }
     } finally {
       setIsSubmitting(false);
@@ -46,11 +51,15 @@ export const Login: React.FC = () => {
   };
 
   const handleDemoAccess = async () => {
-    localStorage.removeItem('mineiro_user'); // Clear only the user data, not the whole storage
-    setValue('email', 'demo@sabormineiro.com');
-    setValue('password', 'demo123');
-    const data = { email: 'demo@sabormineiro.com', password: 'demo123' };
-    await onSubmit(data);
+    // We only remove the user data to fix the name, but we don't clear the whole storage
+    // to avoid potential side effects with router state
+    localStorage.removeItem('mineiro_user');
+    
+    const demoData = { email: 'demo@sabormineiro.com', password: 'demo123' };
+    setValue('email', demoData.email);
+    setValue('password', demoData.password);
+    
+    await onSubmit(demoData);
   };
 
   return (
@@ -80,7 +89,6 @@ export const Login: React.FC = () => {
                 <h3 className="text-sm font-bold text-amber-900">Acesso Demo</h3>
                 <p className="text-xs text-amber-700 mt-1 mb-3">Utilize o botão abaixo para entrar como um usuário de demonstração (somente visualização).</p>
                 <button 
-
                   onClick={handleDemoAccess}
                   disabled={isSubmitting}
                   className="w-full bg-amber-600 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-amber-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
@@ -112,7 +120,7 @@ export const Login: React.FC = () => {
                   {...register('email')}
                   type="email"
                   className={`w-full bg-gray-50 border ${errors.email ? 'border-red-500' : 'border-gray-200'} rounded-2xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-mineiro-brown/20 outline-none transition-all`}
-                  placeholder="admin@sabormineiro.com"
+                  placeholder="email@exemplo.com"
                 />
               </div>
               {errors.email && <p className="text-red-500 text-xs mt-1 ml-1">{errors.email.message}</p>}
