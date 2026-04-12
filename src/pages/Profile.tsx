@@ -71,6 +71,7 @@ export const Profile: React.FC = () => {
   const getPaymentLabel = (method: string) => {
     switch (method) {
       case 'pix': return 'PIX';
+      case 'card':
       case 'credit_card': return 'Cartão de Crédito';
       case 'cash': return 'Dinheiro';
       default: return 'Dinheiro';
@@ -80,6 +81,7 @@ export const Profile: React.FC = () => {
   const getPaymentIcon = (method: string) => {
     switch (method) {
       case 'pix': return <Smartphone className="w-5 h-5 text-gray-400" />;
+      case 'card':
       case 'credit_card': return <CreditCard className="w-5 h-5 text-gray-400" />;
       case 'cash': return <Banknote className="w-5 h-5 text-gray-400" />;
       default: return <Banknote className="w-5 h-5 text-gray-400" />;
