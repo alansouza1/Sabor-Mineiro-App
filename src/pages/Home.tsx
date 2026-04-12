@@ -54,8 +54,8 @@ export const Home: React.FC = () => {
 
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
-      const matchesCategory = selectedCategory === 'Todos' || product.categoria === selectedCategory;
-      const matchesSearch = product.nome.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = selectedCategory === 'Todos' || product.category === selectedCategory;
+      const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesFavorite = !showFavoritesOnly || isFavorite(product.id);
       return matchesCategory && matchesSearch && matchesFavorite;
     });

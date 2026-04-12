@@ -10,7 +10,7 @@ interface AdminDashboardProps {
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders }) => {
   const stats = [
     { label: 'Vendas Hoje', value: 'R$ 1.240', icon: DollarSign, color: 'bg-green-500' },
-    { label: 'Novos Pedidos', value: '12', icon: ClipboardList, color: 'bg-blue-500' },
+    { label: 'Novos Pedidos', value: orders.length.toString(), icon: ClipboardList, color: 'bg-blue-500' },
     { label: 'Clientes Ativos', value: '48', icon: Users, color: 'bg-purple-500' },
     { label: 'Crescimento', value: '+14%', icon: TrendingUp, color: 'bg-amber-500' },
   ];
@@ -24,6 +24,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders }) => {
     { name: 'Sab', sales: 2390 },
     { name: 'Dom', sales: 3490 },
   ];
+
+  const getStatusLabel = (status: string) => {
+    const s = status.toLowerCase();
+    if (s.includes('created') || s.includes('pending')) return 'Pendente';
+    if (s.includes('production')) return 'Em Preparo';
+    if (s.includes('delivery')) return 'Em Rota';
+    if (s.includes('delivered')) return 'Entregue';
+    if (s.includes('cancelled')) return 'Cancelado';
+    return status;
+  };
 
   return (
     <>
@@ -74,7 +84,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders }) => {
               <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center font-bold text-mineiro-brown text-sm">
-                    {order.id}
+                    {order.id.substring(0, 2)}
                   </div>
                   <div>
                     <p className="font-bold text-gray-900">{order.customer.name}</p>
@@ -82,11 +92,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders }) => {
                   </div>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                  order.status === 'delivered' ? 'bg-green-100 text-green-700' :
-                  order.status === 'preparing' ? 'bg-blue-100 text-blue-700' :
+                  order.status.toLowerCase().includes('delivered') ? 'bg-green-100 text-green-700' :
+                  order.status.toLowerCase().includes('production') ? 'bg-blue-100 text-blue-700' :
+                  order.status.toLowerCase().includes('delivery') ? 'bg-purple-100 text-purple-700' :
                   'bg-amber-100 text-amber-700'
                 }`}>
-                  {order.status === 'delivered' ? 'Entregue' : order.status === 'preparing' ? 'Em Preparo' : 'Pendente'}
+                  {getStatusLabel(order.status)}
                 </span>
               </div>
             ))}

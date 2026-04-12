@@ -144,7 +144,9 @@ export const Checkout: React.FC = () => {
                   <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                     {method === 'pix' ? <span className="text-[10px] font-bold text-blue-600">PIX</span> : <CreditCard className="w-5 h-5 text-gray-600" />}
                   </div>
-                  <span className="font-medium capitalize">{method.replace('_', ' ')}</span>
+                  <span className="font-medium capitalize">
+                    {method === 'pix' ? 'PIX' : method === 'credit_card' ? 'Cartão de Crédito' : 'Dinheiro'}
+                  </span>
                 </div>
                 <input 
                   type="radio" 
@@ -163,8 +165,8 @@ export const Checkout: React.FC = () => {
           <div className="space-y-4 mb-6">
             {cart.map((item, index) => (
               <div key={`${item.id}-${index}`} className="flex justify-between text-sm">
-                <span className="text-gray-600">{item.quantity}x {item.nome}</span>
-                <span className="font-medium">R$ {(item.preco * item.quantity).toFixed(2)}</span>
+                <span className="text-gray-600">{item.quantity}x {item.name}</span>
+                <span className="font-medium">R$ {(item.price * item.quantity).toFixed(2)}</span>
               </div>
             ))}
           </div>

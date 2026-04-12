@@ -30,6 +30,17 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onC
     }
   };
 
+  const getStatusLabel = (status: string) => {
+    const s = status.toLowerCase();
+    if (s.includes('created') || s.includes('pending')) return 'Pendente';
+    if (s.includes('production')) return 'Em Preparo';
+    if (s.includes('delivery')) return 'Em Rota';
+    if (s.includes('delivered')) return 'Entregue';
+    if (s.includes('cancelled')) return 'Cancelado';
+    if (s.includes('finished')) return 'Finalizado';
+    return status;
+  };
+
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
       <div className="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl">
@@ -51,7 +62,7 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onC
             {order.items.map((item, i) => (
               <div key={i} className="p-3 bg-gray-50 rounded-xl border border-gray-100">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-gray-700">{item.quantity}x {item.product.nome}</span>
+                  <span className="font-bold text-gray-700">{item.quantity}x {item.product.name}</span>
                   <span className="text-sm font-medium text-mineiro-brown">R$ {(item.priceAtPurchase * item.quantity).toFixed(2)}</span>
                 </div>
                 {item.observations && (
@@ -77,7 +88,7 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onC
             <div className="bg-mineiro-cream/20 p-4 rounded-2xl">
               <p className="text-[10px] font-bold text-mineiro-brown uppercase tracking-wider mb-1">Status</p>
               <p className="text-sm font-bold text-mineiro-brown capitalize">
-                {order.status}
+                {getStatusLabel(order.status)}
               </p>
             </div>
           </div>

@@ -29,13 +29,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <img 
-          src={product.url_imagem} 
-          alt={product.nome}
+          src={product.imageUrl} 
+          alt={product.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           referrerPolicy="no-referrer"
         />
         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-mineiro-brown font-bold text-sm">
-          R$ {product.preco.toFixed(2)}
+          R$ {product.price.toFixed(2)}
         </div>
         <button 
           onClick={(e) => {
@@ -51,10 +51,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       </div>
       <div className="p-5">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-bold text-gray-900">{product.nome}</h3>
+          <h3 className="text-xl font-bold text-gray-900">{product.name}</h3>
         </div>
         <p className="text-gray-500 text-sm line-clamp-2 mb-6 h-10">
-          {product.descricao}
+          {product.description}
         </p>
         <button 
           onClick={(e) => {

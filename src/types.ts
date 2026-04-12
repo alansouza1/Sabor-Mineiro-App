@@ -1,12 +1,12 @@
 export interface Product {
   id: number;
-  nome: string;
-  descricao: string;
-  preco: number;
-  url_imagem: string;
-  qtd_disp: number;
-  precisa_produzir: boolean;
-  categoria: 'Entradas' | 'Pratos Principais' | 'Bebidas' | 'Sobremesas';
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+  availableQuantity: number;
+  needsProduction: boolean;
+  category: 'Entradas' | 'Pratos Principais' | 'Bebidas' | 'Sobremesas';
 }
 
 export interface CartItem extends Product {
@@ -32,7 +32,7 @@ export interface Order {
   };
   items: OrderItem[];
   total: number;
-  status: 'pending' | 'preparing' | 'out_for_delivery' | 'delivered' | 'cancelled';
+  status: string;
   createdAt: string;
 }
 

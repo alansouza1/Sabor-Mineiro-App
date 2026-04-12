@@ -68,6 +68,17 @@ export const Profile: React.FC = () => {
     navigate('/login');
   };
 
+  const getStatusInfo = (status: string) => {
+    const s = status.toLowerCase();
+    if (s.includes('created') || s.includes('pending')) return { label: 'Pendente', color: 'text-amber-500' };
+    if (s.includes('production')) return { label: 'Em Preparo', color: 'text-blue-500' };
+    if (s.includes('delivery')) return { label: 'Em Rota', color: 'text-purple-500' };
+    if (s.includes('delivered')) return { label: 'Entregue', color: 'text-green-500' };
+    if (s.includes('cancelled')) return { label: 'Cancelado', color: 'text-red-500' };
+    if (s.includes('finished')) return { label: 'Finalizado', color: 'text-gray-500' };
+    return { label: status, color: 'text-gray-500' };
+  };
+
   const getPaymentLabel = (method: string) => {
     switch (method) {
       case 'pix': return 'PIX';
@@ -194,12 +205,8 @@ export const Profile: React.FC = () => {
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-mineiro-brown">R$ {order.total.toFixed(2)}</p>
-                      <p className={`text-[10px] font-bold uppercase tracking-widest ${
-                        order.status === 'Entregue' ? 'text-green-500' : 
-                        order.status === 'Em produção' ? 'text-blue-500' : 
-                        'text-amber-500'
-                      }`}>
-                        {order.status}
+                      <p className={`text-[10px] font-bold uppercase tracking-widest ${getStatusInfo(order.status).color}`}>
+                        {getStatusInfo(order.status).label}
                       </p>
                     </div>
                   </div>
@@ -218,10 +225,10 @@ export const Profile: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {favoriteProducts.map(product => (
                     <div key={product.id} className="flex items-center gap-4 p-3 border border-gray-100 rounded-2xl">
-                      <img src={product.url_imagem} alt={product.nome} className="w-16 h-16 rounded-xl object-cover" referrerPolicy="no-referrer" />
+                      <img src={product.imageUrl} alt={product.name} className="w-16 h-16 rounded-xl object-cover" referrerPolicy="no-referrer" />
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-gray-900 truncate">{product.nome}</p>
-                        <p className="text-xs text-mineiro-brown font-bold">R$ {product.preco.toFixed(2)}</p>
+                        <p className="font-bold text-gray-900 truncate">{product.name}</p>
+                        <p className="text-xs text-mineiro-brown font-bold">R$ {product.price.toFixed(2)}</p>
                       </div>
                     </div>
                   ))}
