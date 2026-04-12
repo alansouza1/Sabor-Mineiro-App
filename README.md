@@ -2,6 +2,13 @@
 
 A modern, responsive food delivery application inspired by industry leaders like iFood. Built with a focus on clean code, performance, and professional UX/UI patterns.
 
+## 🚀 Highlights
+
+*   **Fullstack Application:** Seamless integration with a production-like Spring Boot backend and PostgreSQL database.
+*   **Enterprise Security:** JWT-based authentication featuring Role-Based Access Control (RBAC).
+*   **Restricted Demo Mode:** Safe recruiter-friendly exploration with automated read-only permissions for the DEMO role.
+*   **Professional Architecture:** Clean component granularity, custom hooks for logic separation, and global API interceptors.
+
 ---
 
 ## 🌐 Live Demo
@@ -16,11 +23,11 @@ A modern, responsive food delivery application inspired by industry leaders like
 
 ## ✨ Features
 
-*   **Dynamic Menu:** Browse traditional Mineiro dishes with real-time data from the backend.
+*   **Dynamic Menu:** Browse traditional Brazilian (Minas Gerais) dishes with real-time data from the backend.
 *   **Persistent Cart:** Advanced cart management with quantity controls and special observations.
 *   **Seamless Checkout:** Integrated flow for identification, address, and payment selection.
 *   **Admin Dashboard:** A robust management panel for monitoring sales, orders, and managing the product catalog.
-*   **Acesso Demo:** Dedicated read-only mode for recruiters and reviewers to explore administrative features safely.
+*   **Demo Access:** Dedicated read-only mode for recruiters and reviewers to explore administrative features safely.
 *   **Global Security:** JWT-based authentication with automatic token handling via Axios interceptors.
 
 ---
@@ -42,6 +49,10 @@ This frontend consumes a custom **Java Spring Boot REST API**. It follows profes
 *   Stateless authentication.
 *   Global 401 (Unauthorized) and 403 (Forbidden) handling.
 *   Dynamic redirection to intended routes after login.
+
+## 🔗 Backend Repository
+
+https://github.com/alansouza1/sabor-mineiro-api
 
 ---
 
@@ -74,9 +85,13 @@ VITE_API_URL=http://localhost:8080/api
 
 ## 🧪 Testing
 
-The project uses **Vitest** and **React Testing Library** to ensure reliability.
-*   **Core Flows:** Tests for login, cart logic, and protected route redirection.
-*   **Command:** `npm run test`
+The project uses **Vitest** and **React Testing Library** to ensure reliability and maintainability.
+
+*   **Authentication Flows:** Validating login procedures and secure redirection for protected routes.
+*   **Authorization & RBAC:** Ensuring Demo users are restricted from modification actions while maintaining full visibility.
+*   **Business Logic:** Robust testing of cart calculations, order state management, and product filtering.
+
+**Command:** `npm run test`
 
 ---
 
@@ -96,7 +111,7 @@ src/
 
 ## 🔐 Demo Access
 
-To explore the Admin Panel without creating a new account, use the **"Acesso Demo"** button on the login page or enter:
+To explore the Admin Panel without creating a new account, use the **"Demo Access"** button on the login page or enter:
 
 *   **Email:** `demo@sabormineiro.com`
 *   **Password:** `Demo@Mineiro#2026!Read`
