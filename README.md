@@ -54,7 +54,7 @@ This frontend consumes a custom **Java Spring Boot REST API**. It follows profes
 
 ## 🔗 Backend Repository
 
-https://github.com/alansouza1/sabor-mineiro-api
+https://github.com/alansouza1/Sabor-Mineiro-API
 
 ---
 
