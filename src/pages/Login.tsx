@@ -54,7 +54,7 @@ export const Login: React.FC = () => {
     // Clear old user data but keep the redirect state
     localStorage.removeItem('mineiro_user');
     
-    const demoData = { email: 'demo@sabormineiro.com', password: 'demo123' };
+    const demoData = { email: 'demo@sabormineiro.com', password: 'Demo@Mineiro#2026!Read' };
     setValue('email', demoData.email);
     setValue('password', demoData.password);
     
