@@ -25,7 +25,8 @@ export const Login: React.FC = () => {
   const redirectPath = useMemo(() => {
     const state = location.state as any;
     const searchParams = new URLSearchParams(location.search);
-    return state?.from?.pathname || searchParams.get('from') || '/admin';
+    // If we have a 'from' state or param, go there. Otherwise, go to Home.
+    return state?.from?.pathname || searchParams.get('from') || '/';
   }, []);
 
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginFormData>({

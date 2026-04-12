@@ -1,6 +1,6 @@
 import React from 'react';
 import { UtensilsCrossed, ShoppingBag, Settings, User, LogOut } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 interface HeaderProps {
@@ -11,6 +11,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const isAdmin = user?.roles.some(r => ['ROLE_ADMIN', 'ROLE_COZINHEIRO', 'ROLE_ATENDENTE', 'ROLE_DEMO'].includes(r));
 
   const handleLogout = () => {
@@ -60,6 +61,7 @@ export const Header: React.FC<HeaderProps> = ({ cartCount, onOpenCart }) => {
           ) : (
             <Link 
               to="/login"
+              state={{ from: location }}
               className="text-sm font-bold text-mineiro-brown hover:bg-mineiro-cream/20 px-4 py-2 rounded-xl transition-all"
             >
               Entrar
