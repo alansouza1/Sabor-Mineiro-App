@@ -7,7 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 const getVisitorId = () => {
   let vid = localStorage.getItem('mineiro_visitor_id');
   if (!vid) {
-    vid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    vid = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     localStorage.setItem('mineiro_visitor_id', vid);
   }
   return vid;
