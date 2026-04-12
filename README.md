@@ -7,6 +7,7 @@ A modern, responsive food delivery application inspired by industry leaders like
 *   **Fullstack Application:** Seamless integration with a production-like Spring Boot backend and PostgreSQL database.
 *   **Enterprise Security:** JWT-based authentication featuring Role-Based Access Control (RBAC).
 *   **Restricted Demo Mode:** Safe recruiter-friendly exploration with automated read-only permissions for the DEMO role.
+*   **Mobile-First Design:** Fully optimized for responsiveness, providing a native-app-like experience on mobile devices (tested on Poco F7/Android/iOS).
 *   **Professional Architecture:** Clean component granularity, custom hooks for logic separation, and global API interceptors.
 
 ---
