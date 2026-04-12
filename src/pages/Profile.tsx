@@ -43,16 +43,17 @@ export const Profile: React.FC = () => {
     fetchProducts();
   }, []);
 
-  // Use centralized user data from AuthContext
+  // Prioritize data from the last order, fallback to auth data
+  const lastOrder = orders.length > 0 ? orders[0] : null;
+  
   const userData: UserProfile = {
-    name: user?.name || 'Visitante',
+    name: lastOrder?.customer.name || user?.name || 'Visitante',
     email: user?.email || '',
-    phone: '(31) 99999-9999', // Placeholder as backend Client entity has this but AuthResponse might not yet
-    address: 'Endereço não cadastrado' 
+    phone: lastOrder?.customer.phone || '(31) 99999-9999',
+    address: lastOrder?.customer.address || 'Endereço não cadastrado' 
   };
 
   const handleSaveProfile = (data: UserProfile) => {
-    // This would typically call a backend update endpoint
     console.log('Save profile', data);
     setIsEditModalOpen(false);
   };
