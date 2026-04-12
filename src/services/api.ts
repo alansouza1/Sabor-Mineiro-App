@@ -32,7 +32,9 @@ api.interceptors.response.use(
 
     if (status === 401) {
       localStorage.removeItem('mineiro_user');
-      // No window.location.href here to avoid state loss
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = `/login?from=${encodeURIComponent(window.location.pathname)}`;
+      }
     } else if (status === 403) {
       const message = error.response?.data?.message || '';
       if (message.includes('Demo')) {

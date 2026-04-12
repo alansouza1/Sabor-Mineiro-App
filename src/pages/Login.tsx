@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -16,26 +16,17 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, user } = useAuth();
+  const { login } = useAuth();
   
   const [loginError, setLoginError] = React.useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   // STATIC CAPTURE: Determine where to go once, and only once.
-  // We check location.state.from or fallback to /admin.
   const redirectPath = useMemo(() => {
     const state = location.state as any;
-    // Check if there is a 'from' path, otherwise default to admin
-    return state?.from?.pathname || '/admin';
-  }, []); // [] dependency means this value is fixed for the lifecycle of this component instance
-
-  // If the user becomes authenticated, redirect them immediately
-  useEffect(() => {
-    if (user && !isSubmitting) {
-      console.log('User detected, redirecting to:', redirectPath);
-      navigate(redirectPath, { replace: true });
-    }
-  }, [user, navigate, redirectPath, isSubmitting]);
+    const searchParams = new URLSearchParams(location.search);
+    return state?.from?.pathname || searchParams.get('from') || '/admin';
+  }, []);
 
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema)
@@ -46,10 +37,11 @@ export const Login: React.FC = () => {
     setIsSubmitting(true);
     try {
       await login(data.email, data.password);
-      // The useEffect above will handle navigation once 'user' state is updated
+      // Navigation happens immediately on success
+      navigate(redirectPath, { replace: true });
     } catch (error: any) {
       console.error('Login failed:', error);
-      setIsSubmitting(false); // Enable button again on error
+      setIsSubmitting(false); // Only stop loading if there is an error
       if (error.response?.status === 401 || error.response?.status === 403) {
         setLoginError('Email ou senha incorretos.');
       } else {
@@ -59,13 +51,14 @@ export const Login: React.FC = () => {
   };
 
   const handleDemoAccess = async () => {
-    // Clear only the user key, NOT the router state
+    // Clear old user data but keep the redirect state
     localStorage.removeItem('mineiro_user');
     
     const demoData = { email: 'demo@sabormineiro.com', password: 'demo123' };
     setValue('email', demoData.email);
     setValue('password', demoData.password);
     
+    // Explicitly call onSubmit with demo data
     await onSubmit(demoData);
   };
 
