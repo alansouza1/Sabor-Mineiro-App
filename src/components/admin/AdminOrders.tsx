@@ -29,11 +29,12 @@ export const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, onStatusChange
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-bold text-gray-900 md:hidden">Lista de Pedidos</h3>
         <select 
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="bg-white border border-gray-200 rounded-2xl py-3 px-4 focus:ring-2 focus:ring-mineiro-brown/20 outline-none transition-all"
+          className="bg-white border border-gray-200 rounded-2xl py-2 px-4 focus:ring-2 focus:ring-mineiro-brown/20 outline-none text-sm shadow-sm"
         >
           <option value="all">Todos os Status</option>
           <option value="Created">Pendente</option>
@@ -43,7 +44,9 @@ export const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, onStatusChange
           <option value="Cancelled by client">Cancelado</option>
         </select>
       </div>
-      <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
+
+      {/* Desktop Table View */}
+      <div className="hidden md:block bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-gray-50 border-b border-gray-100">
             <tr>
@@ -89,16 +92,55 @@ export const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, onStatusChange
                 </tr>
               );
             })}
-            {filteredOrders.length === 0 && (
-              <tr>
-                <td colSpan={6} className="px-8 py-8 text-center text-gray-500">
-                  Nenhum pedido encontrado.
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
       </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-4">
+        {filteredOrders.map(order => {
+          const statusInfo = getStatusInfo(order.status);
+          return (
+            <div key={order.id} className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ID #{order.id.substring(0,6)}</p>
+                  <h4 className="font-bold text-gray-900">{order.customer.name}</h4>
+                </div>
+                <p className="font-bold text-mineiro-brown text-lg">R$ {order.total.toFixed(2)}</p>
+              </div>
+              
+              <div className="flex items-center justify-between gap-4">
+                <select 
+                  className={`flex-1 px-3 py-2 rounded-xl text-xs font-bold uppercase tracking-wider outline-none border-none cursor-pointer ${statusInfo.color}`}
+                  value={order.status}
+                  onChange={(e) => onStatusChange(order.id, e.target.value as any)}
+                >
+                  <option value="Created">Pendente</option>
+                  <option value="In production">Preparando</option>
+                  <option value="Out for delivery">Em Rota</option>
+                  <option value="Delivered">Entregue</option>
+                  <option value="Cancelled by client">Cancelado</option>
+                  <option value="Finished">Finalizado</option>
+                </select>
+                <button 
+                  onClick={() => onViewDetails(order)}
+                  className="bg-gray-50 text-gray-600 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap"
+                >
+                  Ver Detalhes
+                </button>
+              </div>
+              <p className="text-[10px] text-gray-400 text-center">{new Date(order.createdAt).toLocaleString()}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      {filteredOrders.length === 0 && (
+        <div className="bg-white rounded-[2.5rem] p-12 text-center text-gray-500 border border-gray-100">
+          Nenhum pedido encontrado.
+        </div>
+      )}
     </div>
   );
 };
