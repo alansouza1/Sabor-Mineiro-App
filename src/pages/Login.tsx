@@ -46,7 +46,7 @@ export const Login: React.FC = () => {
   };
 
   const handleDemoAccess = async () => {
-    localStorage.clear(); // Wipe old stale data
+    localStorage.removeItem('mineiro_user'); // Clear only the user data, not the whole storage
     setValue('email', 'demo@sabormineiro.com');
     setValue('password', 'demo123');
     const data = { email: 'demo@sabormineiro.com', password: 'demo123' };
