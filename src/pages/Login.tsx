@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Lock, User, ArrowRight, ArrowLeft, AlertCircle, ShieldCheck, Loader2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
@@ -15,9 +15,13 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
   const [loginError, setLoginError] = React.useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  // Get the intended destination or default to admin
+  const from = (location.state as any)?.from?.pathname || '/admin';
 
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema)
@@ -28,7 +32,7 @@ export const Login: React.FC = () => {
     setIsSubmitting(true);
     try {
       await login(data.email, data.password);
-      navigate('/admin');
+      navigate(from, { replace: true });
     } catch (error: any) {
       console.error('Login failed:', error);
       if (error.response?.status === 401 || error.response?.status === 403) {
