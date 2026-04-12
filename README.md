@@ -18,7 +18,7 @@ A modern, responsive food delivery application inspired by industry leaders like
 ---
 
 ## 📸 Preview
-![App Preview Placeholder](https://via.placeholder.com/800x400?text=Sabor+Mineiro+Frontend+Preview)
+![App Preview Placeholder](docs/images/Screenshot%202026-04-12%20144312.png)
 
 ---
 
