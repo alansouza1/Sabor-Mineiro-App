@@ -42,7 +42,8 @@ export const Checkout: React.FC = () => {
       await addOrder({
         items: cart,
         total: cartTotal,
-        customer: data
+        customer: data,
+        paymentMethod: data.paymentMethod
       });
       clearCart();
       navigate('/success');
