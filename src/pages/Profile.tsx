@@ -8,7 +8,9 @@ import {
   ChevronRight, 
   LogOut, 
   Package,
-  Heart
+  Heart,
+  Banknote,
+  Smartphone
 } from 'lucide-react';
 import { Header } from '../components/layout/Header';
 import { useCart } from '../hooks/useCart';
@@ -46,11 +48,12 @@ export const Profile: React.FC = () => {
   // Prioritize data from the last order, fallback to auth data
   const lastOrder = orders.length > 0 ? orders[0] : null;
   
-  const userData: UserProfile = {
+  const userData: UserProfile & { paymentMethod: string } = {
     name: lastOrder?.customer.name || user?.name || 'Visitante',
     email: user?.email || '',
     phone: lastOrder?.customer.phone || '(31) 99999-9999',
-    address: lastOrder?.customer.address || 'Endereço não cadastrado' 
+    address: lastOrder?.customer.address || 'Endereço não cadastrado',
+    paymentMethod: lastOrder?.customer.paymentMethod || 'cash'
   };
 
   const handleSaveProfile = (data: UserProfile) => {
@@ -63,6 +66,24 @@ export const Profile: React.FC = () => {
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const getPaymentLabel = (method: string) => {
+    switch (method) {
+      case 'pix': return 'PIX';
+      case 'credit_card': return 'Cartão de Crédito';
+      case 'cash': return 'Dinheiro';
+      default: return 'Dinheiro';
+    }
+  };
+
+  const getPaymentIcon = (method: string) => {
+    switch (method) {
+      case 'pix': return <Smartphone className="w-5 h-5 text-gray-400" />;
+      case 'credit_card': return <CreditCard className="w-5 h-5 text-gray-400" />;
+      case 'cash': return <Banknote className="w-5 h-5 text-gray-400" />;
+      default: return <Banknote className="w-5 h-5 text-gray-400" />;
+    }
   };
 
   return (
@@ -134,11 +155,11 @@ export const Profile: React.FC = () => {
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-gray-200">
-                    <CreditCard className="w-5 h-5 text-gray-400" />
+                    {getPaymentIcon(userData.paymentMethod)}
                   </div>
                   <div>
-                    <p className="text-sm font-bold">•••• 4421</p>
-                    <p className="text-xs text-gray-500">Mastercard</p>
+                    <p className="text-sm font-bold">{getPaymentLabel(userData.paymentMethod)}</p>
+                    <p className="text-xs text-gray-500">Última forma utilizada</p>
                   </div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
