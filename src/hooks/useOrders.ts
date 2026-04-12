@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Order, CreateOrderRequest } from '../types';
 import { OrderService } from '../services/api';
 
-export const useOrders = () => {
+export const useOrders = (autoFetch: boolean = false) => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,8 +22,10 @@ export const useOrders = () => {
   }, []);
 
   useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
+    if (autoFetch) {
+      fetchOrders();
+    }
+  }, [autoFetch, fetchOrders]);
 
   const addOrder = useCallback(async (orderData: CreateOrderRequest) => {
     setLoading(true);

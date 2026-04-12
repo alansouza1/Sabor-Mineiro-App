@@ -26,7 +26,7 @@ export const Profile: React.FC = () => {
   const navigate = useNavigate();
   const { cartCount, setIsCartOpen } = useCart();
   const { favorites } = useFavorites();
-  const { orders } = useOrders();
+  const { orders } = useOrders(true);
   const { user, logout } = useAuth();
 
   const [products, setProducts] = React.useState<Product[]>([]);

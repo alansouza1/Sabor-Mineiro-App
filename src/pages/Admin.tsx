@@ -23,7 +23,7 @@ export const Admin: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { orders, updateOrderStatus } = useOrders();
+  const { orders, updateOrderStatus } = useOrders(true);
   
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<number | null>(null);
