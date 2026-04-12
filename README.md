@@ -13,7 +13,8 @@ A modern, responsive food delivery application inspired by industry leaders like
 ---
 
 ## 🌐 Live Demo
-Link: https://sabormineiro.alansouza.tech/
+
+Link: https://sabormineiro.alansouza.tech
 
 ---
 
