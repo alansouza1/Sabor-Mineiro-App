@@ -88,6 +88,11 @@ export const Login: React.FC = () => {
               <div>
                 <h3 className="text-sm font-bold text-amber-900">Acesso Demo</h3>
                 <p className="text-xs text-amber-700 mt-1 mb-3">Utilize o botão abaixo para entrar como um usuário de demonstração.</p>
+                <div className="bg-white/50 p-3 rounded-xl mb-4 border border-amber-200">
+                  <p className="text-[10px] text-amber-800 font-medium leading-tight">
+                    <strong>Aviso de Privacidade:</strong> O painel é compartilhado. Para sua segurança, utilize <strong>dados fictícios</strong> no checkout. Suas ordens serão isoladas por sessão do navegador.
+                  </p>
+                </div>
                 <button 
                   type="button"
                   onClick={handleDemoAccess}

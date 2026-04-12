@@ -116,6 +116,8 @@ To explore the Admin Panel without creating a new account, use the **"Demo Acces
 *   **Email:** `demo@sabormineiro.com`
 *   **Password:** `Demo@Mineiro#2026!Read`
 
+> **🔒 Privacy Notice:** The Demo Dashboard is a shared environment. For your own security, please use **fictional data** (name, address, phone) during checkout. Orders are isolated per browser session using a `visitor_id`.
+
 > **Note:** Demo users have **Read-Only** access. You can view orders and products, but creation, modification, or deletion actions are restricted.
 
 ---

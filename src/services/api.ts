@@ -2,6 +2,16 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
+// visitorId generation for session isolation
+const getVisitorId = () => {
+  let vid = localStorage.getItem('mineiro_visitor_id');
+  if (!vid) {
+    vid = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    localStorage.setItem('mineiro_visitor_id', vid);
+  }
+  return vid;
+};
+
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -11,6 +21,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
+    config.headers['X-Visitor-Id'] = getVisitorId();
     const userJson = localStorage.getItem('mineiro_user');
     if (userJson) {
       const user = JSON.parse(userJson);

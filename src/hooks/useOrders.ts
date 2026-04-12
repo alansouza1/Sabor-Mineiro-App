@@ -33,6 +33,7 @@ export const useOrders = () => {
       const payload = {
         customer: orderData.customer,
         paymentMethod: orderData.paymentMethod,
+        visitorId: localStorage.getItem('mineiro_visitor_id'),
         items: orderData.items.map(item => ({
           productId: item.id,
           quantity: item.quantity,
