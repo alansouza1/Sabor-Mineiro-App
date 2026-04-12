@@ -218,10 +218,10 @@ export const Profile: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {favoriteProducts.map(product => (
                     <div key={product.id} className="flex items-center gap-4 p-3 border border-gray-100 rounded-2xl">
-                      <img src={product.url_imagem} alt={product.nome} className="w-16 h-16 rounded-xl object-cover" referrerPolicy="no-referrer" />
+                      <img src={product.imageUrl} alt={product.name} className="w-16 h-16 rounded-xl object-cover" referrerPolicy="no-referrer" />
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-gray-900 truncate">{product.nome}</p>
-                        <p className="text-xs text-mineiro-brown font-bold">R$ {product.preco.toFixed(2)}</p>
+                        <p className="font-bold text-gray-900 truncate">{product.name}</p>
+                        <p className="text-xs text-mineiro-brown font-bold">R$ {product.price.toFixed(2)}</p>
                       </div>
                     </div>
                   ))}

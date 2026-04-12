@@ -163,8 +163,8 @@ export const Checkout: React.FC = () => {
           <div className="space-y-4 mb-6">
             {cart.map((item, index) => (
               <div key={`${item.id}-${index}`} className="flex justify-between text-sm">
-                <span className="text-gray-600">{item.quantity}x {item.nome}</span>
-                <span className="font-medium">R$ {(item.preco * item.quantity).toFixed(2)}</span>
+                <span className="text-gray-600">{item.quantity}x {item.name}</span>
+                <span className="font-medium">R$ {(item.price * item.quantity).toFixed(2)}</span>
               </div>
             ))}
           </div>

@@ -43,8 +43,8 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             <div className="flex flex-col md:flex-row h-full max-h-[90vh]">
               <div className="relative w-full md:w-1/2 h-64 md:h-auto">
                 <img 
-                  src={product.url_imagem} 
-                  alt={product.nome} 
+                  src={product.imageUrl} 
+                  alt={product.name} 
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
@@ -67,15 +67,15 @@ export const ProductModal: React.FC<ProductModalProps> = ({
               <div className="flex-1 p-8 flex flex-col">
                 <div className="flex-1">
                   <span className="text-xs font-bold text-mineiro-brown uppercase tracking-widest bg-mineiro-brown/10 px-3 py-1 rounded-full">
-                    {product.categoria}
+                    {product.category}
                   </span>
-                  <h2 className="text-3xl font-serif font-bold text-gray-900 mt-4 mb-2">{product.nome}</h2>
-                  <p className="text-gray-500 leading-relaxed mb-6">{product.descricao}</p>
+                  <h2 className="text-3xl font-serif font-bold text-gray-900 mt-4 mb-2">{product.name}</h2>
+                  <p className="text-gray-500 leading-relaxed mb-6">{product.description}</p>
                   
                   <div className="space-y-4">
                     <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
                       <span className="text-gray-600 font-medium">Preço Unitário</span>
-                      <span className="text-2xl font-bold text-mineiro-brown">R$ {product.preco.toFixed(2)}</span>
+                      <span className="text-2xl font-bold text-mineiro-brown">R$ {product.price.toFixed(2)}</span>
                     </div>
                     
                     <div className="space-y-2">

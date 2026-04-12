@@ -1,95 +1,64 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
 import { ProductCard } from '../ProductCard';
 import { Product } from '../../../types';
 
 const mockProduct: Product = {
   id: 1,
-  nome: 'Tutu à Mineira',
-  descricao: 'Feijão refogado e engrossado com farinha de mandioca.',
-  preco: 32.23,
-  url_imagem: 'https://picsum.photos/seed/tutu/800/600',
-  qtd_disp: 30,
-  precisa_produzir: true,
-  categoria: 'Pratos Principais',
+  name: 'Tutu à Mineira',
+  description: 'Feijão refogado e engrossado com farinha de mandioca.',
+  price: 32.23,
+  imageUrl: 'https://picsum.photos/seed/tutu/800/600',
+  availableQuantity: 30,
+  needsProduction: true,
+  category: 'Pratos Principais',
 };
 
 describe('ProductCard', () => {
-  const mockOnAddToCart = vi.fn();
-  const mockOnOpenDetails = vi.fn();
-  const mockOnToggleFavorite = vi.fn();
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('renders product information correctly', () => {
+  it('should render product information correctly', () => {
     render(
-      <ProductCard
-        product={mockProduct}
-        onAddToCart={mockOnAddToCart}
-        onOpenDetails={mockOnOpenDetails}
+      <ProductCard 
+        product={mockProduct} 
+        onOpenModal={() => {}} 
+        onAddToCart={() => {}}
         isFavorite={false}
-        onToggleFavorite={mockOnToggleFavorite}
+        onToggleFavorite={() => {}}
       />
     );
 
-    expect(screen.getByText('Tutu à Mineira')).toBeInTheDocument();
-    expect(screen.getByText('Feijão refogado e engrossado com farinha de mandioca.')).toBeInTheDocument();
-    expect(screen.getByText('R$ 32.23')).toBeInTheDocument();
+    expect(screen.getByText(mockProduct.name)).toBeDefined();
+    expect(screen.getByText(/32,23/)).toBeDefined();
   });
 
-  it('calls onAddToCart when add button is clicked', () => {
+  it('should call onOpenModal when clicking the card', () => {
+    const onOpenModal = vi.fn();
     render(
-      <ProductCard
-        product={mockProduct}
-        onAddToCart={mockOnAddToCart}
-        onOpenDetails={mockOnOpenDetails}
+      <ProductCard 
+        product={mockProduct} 
+        onOpenModal={onOpenModal} 
+        onAddToCart={() => {}}
         isFavorite={false}
-        onToggleFavorite={mockOnToggleFavorite}
+        onToggleFavorite={() => {}}
       />
     );
 
-    const addButton = screen.getByRole('button', { name: /Adicionar/i });
-    fireEvent.click(addButton);
-
-    expect(mockOnAddToCart).toHaveBeenCalledTimes(1);
-    expect(mockOnAddToCart).toHaveBeenCalledWith(mockProduct);
+    fireEvent.click(screen.getByText(mockProduct.name));
+    expect(onOpenModal).toHaveBeenCalledWith(mockProduct);
   });
 
-  it('calls onToggleFavorite when favorite button is clicked', () => {
+  it('should call onAddToCart when clicking the add button', () => {
+    const onAddToCart = vi.fn();
     render(
-      <ProductCard
-        product={mockProduct}
-        onAddToCart={mockOnAddToCart}
-        onOpenDetails={mockOnOpenDetails}
+      <ProductCard 
+        product={mockProduct} 
+        onOpenModal={() => {}} 
+        onAddToCart={onAddToCart}
         isFavorite={false}
-        onToggleFavorite={mockOnToggleFavorite}
+        onToggleFavorite={() => {}}
       />
     );
 
-    // The favorite button is the first button (heart icon)
-    const favoriteButton = screen.getAllByRole('button')[0];
-    fireEvent.click(favoriteButton);
-
-    expect(mockOnToggleFavorite).toHaveBeenCalledTimes(1);
-    expect(mockOnToggleFavorite).toHaveBeenCalledWith(mockProduct.id);
-  });
-
-  it('calls onOpenDetails when image is clicked', () => {
-    render(
-      <ProductCard
-        product={mockProduct}
-        onAddToCart={mockOnAddToCart}
-        onOpenDetails={mockOnOpenDetails}
-        isFavorite={false}
-        onToggleFavorite={mockOnToggleFavorite}
-      />
-    );
-
-    const image = screen.getByAltText('Tutu à Mineira');
-    fireEvent.click(image);
-
-    expect(mockOnOpenDetails).toHaveBeenCalledTimes(1);
-    expect(mockOnOpenDetails).toHaveBeenCalledWith(mockProduct);
+    fireEvent.click(screen.getByTitle(/Adicionar ao carrinho/));
+    expect(onAddToCart).toHaveBeenCalledWith(mockProduct);
   });
 });

@@ -71,14 +71,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 items.map((item, index) => (
                   <div key={`${item.id}-${index}`} className="flex gap-4">
                     <img 
-                      src={item.url_imagem} 
+                      src={item.imageUrl} 
                       className="w-20 h-20 rounded-2xl object-cover"
-                      alt={item.nome}
+                      alt={item.name}
                       referrerPolicy="no-referrer"
                     />
                     <div className="flex-1">
                       <div className="flex justify-between mb-1">
-                        <h4 className="font-bold text-gray-900">{item.nome}</h4>
+                        <h4 className="font-bold text-gray-900">{item.name}</h4>
                         <button 
                           onClick={() => onRemove(item.id, item.observations)}
                           className="text-gray-400 hover:text-red-500"
@@ -86,7 +86,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                           <X className="w-4 h-4" />
                         </button>
                       </div>
-                      <p className="text-mineiro-brown font-bold text-sm mb-3">R$ {item.preco.toFixed(2)}</p>
+                      <p className="text-mineiro-brown font-bold text-sm mb-3">R$ {item.price.toFixed(2)}</p>
                       <div className="flex items-center gap-3">
                         <button 
                           onClick={() => onUpdateQuantity(item.id, item.observations, -1)}
