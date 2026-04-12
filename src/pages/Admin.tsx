@@ -127,36 +127,40 @@ export const Admin: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Mobile Header */}
-      <div className="md:hidden bg-mineiro-brown text-white p-4 flex items-center justify-between sticky top-0 z-50 shadow-md">
+      <div className="md:hidden bg-mineiro-brown text-white p-4 flex items-center justify-between sticky top-0 z-[60] shadow-md">
         <h1 className="text-lg font-serif font-bold">Sabor Mineiro</h1>
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2">
+        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 bg-white/10 rounded-xl">
           {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
-      {/* Mobile Navigation Drawer */}
+      {/* Mobile Navigation Drawer Overlay */}
       {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm transition-all animate-in fade-in duration-300">
-          <div className="bg-mineiro-brown w-64 h-full animate-in slide-in-from-left duration-300">
-            <AdminSidebar 
-              activeTab={activeTab} 
-              onTabChange={toggleTab} 
-              isDemo={!!isDemo} 
-              onLogout={handleLogout} 
-            />
-          </div>
-        </div>
+        <div 
+          className="md:hidden fixed inset-0 bg-black/60 z-[70] backdrop-blur-sm"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
       )}
 
-      {/* Desktop Sidebar */}
-      <div className="hidden md:block">
+      {/* Mobile Sidebar Content */}
+      <div className={`md:hidden fixed top-0 left-0 bottom-0 w-72 bg-mineiro-brown z-[80] transition-transform duration-300 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <AdminSidebar 
+          activeTab={activeTab} 
+          onTabChange={toggleTab} 
+          isDemo={!!isDemo} 
+          onLogout={handleLogout} 
+        />
+      </div>
+
+      {/* Desktop Sidebar (Permanent) */}
+      <aside className="hidden md:flex w-64 sticky top-0 h-screen overflow-y-auto">
         <AdminSidebar 
           activeTab={activeTab} 
           onTabChange={setActiveTab} 
           isDemo={!!isDemo} 
           onLogout={handleLogout} 
         />
-      </div>
+      </aside>
 
       <main className="flex-1 flex flex-col min-w-0">
         <AdminHeader 
@@ -210,7 +214,7 @@ export const Admin: React.FC = () => {
               <AlertCircle className="text-red-500 w-6 h-6 md:w-8 md:h-8" />
             </div>
             <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">Excluir Produto?</h3>
-            <p className="text-sm md:text-base text-gray-500 mb-6 md:mb-8">Esta ação não pode ser desfeita. O prato será removido permanentemente do cardápio.</p>
+            <p className="text-sm md:text-base text-gray-500 mb-6 md:mb-8">Esta ação não pode ser desfeita.</p>
             <div className="flex gap-3">
               <button 
                 onClick={() => setProductToDelete(null)}

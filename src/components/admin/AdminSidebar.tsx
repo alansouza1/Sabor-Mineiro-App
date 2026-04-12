@@ -23,7 +23,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   onLogout 
 }) => {
   return (
-    <aside className="w-64 bg-mineiro-brown text-white hidden md:flex flex-col sticky top-0 h-screen">
+    <div className="flex flex-col h-full bg-mineiro-brown text-white">
       <div className="p-6 border-b border-white/10">
         <div className="flex items-center gap-3">
           <h1 className="text-xl font-serif font-bold">Sabor Mineiro</h1>
@@ -65,7 +65,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           <div className="flex items-start gap-3">
             <Info className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
             <p className="text-[10px] leading-tight text-amber-200/80 font-medium">
-              Você está em <span className="text-amber-400 font-bold">Modo Demo</span>. Ações de alteração estão desabilitadas para preservar os dados da demonstração.
+              Você está em <span className="text-amber-400 font-bold">Modo Demo</span>. Ações de alteração estão desabilitadas para preservar os dados.
             </p>
           </div>
         </div>
@@ -87,6 +87,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           <span className="font-medium">Sair</span>
         </button>
       </div>
-    </aside>
+    </div>
   );
 };
