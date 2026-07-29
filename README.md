@@ -12,12 +12,6 @@ A modern, responsive food delivery application inspired by industry leaders like
 
 ---
 
-## 🌐 Live Demo
-
-Link: https://sabormineiro.alansouza.tech
-
----
-
 ## 📸 Preview
 ![App Preview Placeholder](docs/images/Screenshot%202026-04-12%20144312.png)
 
